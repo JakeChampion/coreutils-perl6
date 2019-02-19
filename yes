@@ -1,6 +1,5 @@
 #!/usr/bin/env perl6
-
 loop {
-    state $expletive = @*ARGS[0] || "y";
-    put $expletive;
+	state $expletive = @*ARGS[0] || "y";
+	put $expletive;
 }

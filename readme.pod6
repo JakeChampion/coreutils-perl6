@@ -1,0 +1,10 @@
+=begin pod
+
+=head1 perl6 coreutils
+
+🦋💕💻
+
+unix core utilities implemented in perl6
+
+
+=end pod

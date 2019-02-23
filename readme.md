@@ -1,4 +1,4 @@
-Perlutils - Implementing coreutils in perl6
+Perlutils - Implementing coreutils in perl6 :)
 
 ## Using perlutils
 1. Get perl6 - download an implementation of perl6 like Rakudo-Star

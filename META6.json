@@ -1,0 +1,18 @@
+{
+  "authors" : [
+    "kj",
+    "jake",
+    "chee"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "perl6-coreutils",
+  "license" : "Artistic-2.0",
+  "name" : "coreutils",
+  "perl" : "6.d",
+  "resources" : [ ],
+  "source-url" : "https://github.com/jakechampion/coreutils-perl6",
+  "tags" : [ "coreutils", "unix" ],
+  "test-depends" : [ ],
+  "version" : "0.0.0"
+}

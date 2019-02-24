@@ -1,11 +1,11 @@
 #!/usr/bin/env perl6
 
-my $endWithNoNewLine = (@*ARGS.first eq "-n");
+my $end-with-no-newline = (@*ARGS.first eq "-n");
 
-if $endWithNoNewLine {
+if $end-with-no-newline {
     @*ARGS.shift();
 }
 
 print @*ARGS.join(" ");
 
-print "\n" unless $endWithNoNewLine 
+print "\n" unless $end-with-no-newline 

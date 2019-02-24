@@ -1,0 +1,23 @@
+#!/usr/bin/env perl6
+
+sub MAIN(
+    :$a = False, #= Append the output to the files rather than rewriting them.
+    *@files
+) {
+    my $is-first-line = True;
+    for $*IN.lines() -> $line {
+        put $line;
+        for @files -> $file {
+            if ($is-first-line) {
+                if ($a) {
+                    spurt $file, $line, :append;
+                } else {
+                    spurt $file, $line;
+                }
+            } else {
+                spurt $file, "\n" ~ $line, :append;
+            }
+        }
+        $is-first-line = False;
+    }
+}

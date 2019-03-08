@@ -1,0 +1,19 @@
+#!/usr/bin/env perl6
+
+sub MAIN(
+    $file = "-",
+    :$u = False, #= Print unique lines
+    :$d = False, #= Print (one copy of) duplicated lines.
+    :$c = False #= Prefix a repetition count and a tab to each output line. Implies −u and −d.
+) {
+    my @lines = $file ~~ "-" ?? $*IN.lines() !! $file.IO.lines;
+    my $prev_line = "";
+    for @lines -> $line {
+        if ($prev_line !eq $line && !$d) {
+            put $line;
+        } elsif ($prev_line eq $line && $d) {
+            put $line;
+        }
+        $prev_line = $line;
+    }
+}

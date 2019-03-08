@@ -1,0 +1,25 @@
+#!/usr/bin/env perl6
+
+use MIME::Base64;
+
+sub MAIN(
+    $file = "-",
+    :$d = False
+) {
+    if ($file ~~ "-") {
+        for $*IN.lines() -> $line {
+            if ($d == False) {
+                put MIME::Base64.encode-str($line);
+            } else {
+                put MIME::Base64.decode-str($line);
+            }
+        }
+    } else {
+        my $file_contents = slurp $file, :bin;
+        if ($d == False) {
+            put MIME::Base64.encode($file_contents);
+        } else {
+            put MIME::Base64.decode($file_contents);
+        }
+    }
+}

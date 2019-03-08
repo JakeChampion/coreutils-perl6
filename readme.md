@@ -1,6 +1,6 @@
-Perlutils - Implementing coreutils in perl6 :)
+TCPIP - Implementing coreutils in perl6 :)
 
-## Using perlutils
+## Using TCPIP
 1. Get perl6, so computer can speak perl6. Download an implementation of perl6 like Rakudo-Star.
 2. Tell shell where the perl6 is in the computer, so shell can speak perl6. In bash_profile: `export PATH="$PATH:[*path to rakudo bin directory*]"`
 3. Clone this repo, so your computer has the perlutils code.

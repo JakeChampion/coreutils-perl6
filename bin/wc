@@ -2,6 +2,8 @@
 my %*SUB-MAIN-OPTS =
 	:named-anywhere;
 
+# wc actually does padding, but that's harder because
+# we'd need to know the biggest number before we start printing
 sub tab-print ($term) {
 	print("\t{$term}");
 }
@@ -28,6 +30,7 @@ sub check-goodness ($file) {
 			complain($file, ｢Is a directory｣);
 			False
 		}
+		# not readable by user
 		when !*.r {
 			complain($file, ｢Permission denied｣);
 			False
@@ -42,6 +45,7 @@ sub print-line (:$options!, :%counts!, :$name) {
 	for $options.comb -> $key {
 		my $count = %counts<<$key>>;
 
+		# wc only prints leading space is only printed if there are >1 options
 		my &print-count = $options.elems == 1
 			?? &print
 			!! &tab-print;
@@ -57,7 +61,7 @@ sub print-line (:$options!, :%counts!, :$name) {
 }
 
 sub MAIN (
-	*@files,
+	*@filenames,
 	Bool :$l, #= lines
 	Bool :$w, #= words
 	Bool :$c, #= bytes
@@ -74,12 +78,14 @@ sub MAIN (
 		:r($r)
 	].grep(*.value).map(*.key);
 
-	my %totals;
+	if (@filenames) {
+		my @files = @filenames.map(*.IO);
 
-	@files = @files.map(*.IO);
+		my %totals;
 
-	if (@files) {
+		# if we have files, count em
 		for @files -> $file {
+			# skip files that aren't countable
 			next unless check-goodness($file);
 
 			my %counts = wc(slurp($file));
@@ -95,6 +101,7 @@ sub MAIN (
 			)
 		}
 
+		# if we have more than one file, we want to see totals
 		if (@files.elems > 1) {
 			print-line(
 				:counts(%totals),
@@ -103,6 +110,7 @@ sub MAIN (
 			)
 		}
 	} else {
+		# if no files are provided, read from STDIN
 		my %counts = wc(slurp);
 
 		print-line(

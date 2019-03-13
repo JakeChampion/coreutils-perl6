@@ -42,11 +42,11 @@ sub print-line (:$options!, :%counts!, :$name) {
 	for $options.comb -> $key {
 		my $count = %counts<<$key>>;
 
-		if ($count ~~ Int && $options.elems == 1) {
-			print($count) if $count;
-		} else {
-			tab-print($count) if $count;
-		}
+		my &print-count = $options.elems == 1
+			?? &print
+			!! &tab-print;
+
+		print-count($count) if $count ~~ Int;
 	}
 
 	if $name {

@@ -2,34 +2,62 @@
 my %*SUB-MAIN-OPTS =
 	:named-anywhere;
 
-sub tput ($term) {
-	print("\t$term");
+sub tab-print ($term) {
+	print("\t{$term}");
 }
 
 my &wc = {
-	{
-		l => .lines.elems,
-		w => .words.elems,
-		c => .encode.bytes,
-		m => .codes,
-		r => .chars
+	l => .lines.elems,
+	w => .words.elems,
+	c => .encode.bytes,
+	m => .codes,
+	r => .chars
+}
+
+sub complain ($file, $complaint) {
+	$*ERR.put: "$*PROGRAM-NAME: $file: $complaint";
+}
+
+sub check-goodness ($file) {
+	given $file {
+		when !*.e {
+			complain($file, ｢No such file or directory｣);
+			False
+		}
+		when .d {
+			complain($file, ｢Is a directory｣);
+			False
+		}
+		when !*.r {
+			complain($file, ｢Permission denied｣);
+			False
+		}
+		default {
+			True
+		}
 	}
 }
-	# my $name = $io.Str;
-	# my $input = $io.slurp;
 
-	# my $active-options = $options.values.grep({$_});
+sub print-line (:$options!, :%counts!, :$name) {
+	for $options.comb -> $key {
+		my $count = %counts<<$key>>;
 
-	# tput $linecount if $options<l> or $active-options == 0;
-	# tput $wordcount if $options<w> or $active-options == 0;
-	# tput $bytecount if $options<c> or $active-options == 0;
-	# tput $codecount if $options<m>;
-	# tput $runecount if $options<r>;
-	# tput $name if $count > 1;
-	# put();
+		if ($count ~~ Int && $options.elems == 1) {
+			print($count) if $count;
+		} else {
+			tab-print($count) if $count;
+		}
+	}
+
+	if $name {
+		tab-print $name
+	};
+
+	put();
+}
 
 sub MAIN (
-	*@files where ?*.grep({.IO.f}),
+	*@files,
 	Bool :$l, #= lines
 	Bool :$w, #= words
 	Bool :$c, #= bytes
@@ -48,40 +76,39 @@ sub MAIN (
 
 	my %totals;
 
-	for @files -> $file {
-		my %counts = wc($file.IO.slurp);
+	@files = @files.map(*.IO);
 
-		for %counts.kv -> $key, $value {
-			%totals<<$key>> += $value;
-		}
+	if (@files) {
+		for @files -> $file {
+			next unless check-goodness($file);
 
-		for $options.comb -> $key {
-			my $count = %counts<<$key>>;
-			if ($options.elems == 1) {
-				print($count);
-			} else {
-				tput($count);
+			my %counts = wc(slurp($file));
+
+			for %counts.kv -> $key, $value {
+				%totals<<$key>> += $value;
 			}
+
+			print-line(
+				:counts(%counts),
+				:options($options),
+				:name($file.Str)
+			)
 		}
 
 		if (@files.elems > 1) {
-			tput $file.Str;
+			print-line(
+				:counts(%totals),
+				:options($options),
+				:name(｢total｣)
+			)
 		}
+	} else {
+		my %counts = wc(slurp);
 
-		put();
-	}
-
-	if (@files.elems > 1) {
-		for $options.comb -> $key {
-			my $count = %totals<<$key>>;
-			if ($options.elems == 1) {
-				print($count);
-			} else {
-				tput($count);
-			}
-		}
-		tput ｢total｣;
-		put();
+		print-line(
+			:counts(%counts),
+			:options($options)
+		)
 	}
 }
 
